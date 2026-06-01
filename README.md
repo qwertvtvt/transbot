@@ -1,8 +1,16 @@
 # transbot
 
-LINEのメッセージをDiscordチャンネルへ転送するBotです。
+LINEのメッセージをDiscordチャンネルへ転送する、身内向けのBotです。
 
 クラスLINEなど、普段見に行くのが面倒なLINEグループの連絡を、Discord Webhook経由で指定チャンネルへ流すために作っています。
+
+## これで何が起きる？
+
+LINEグループに投稿されたテキスト、画像、動画がDiscordの指定チャンネルに転送されます。
+
+Discordでは、Webhookの投稿者名とアイコンをLINEプロフィールに合わせて表示します。そのため、Discordに参加していない人のLINE投稿も、LINE上の名前とアイコンに近い見た目で流れます。
+
+本番のグループで使う前に、LINEの投稿がDiscordへ転送されることを参加者へ周知してください。
 
 ## 基本仕様
 
@@ -14,6 +22,7 @@ LINEのメッセージをDiscordチャンネルへ転送するBotです。
 - LINEプロフィールを取得できない場合、投稿者名は`Guest`になります。
 - Discord転送時のメンションは無効化しています。
 - スタンプなど、未対応のメッセージ種別は現在転送しません。
+- LINEからDiscordへの一方向転送です。DiscordからLINEへの返信や、編集・削除の同期はしません。
 
 ## 構成
 
@@ -22,6 +31,8 @@ main.js              ExpressサーバーとWebhook処理
 line.js              LINE APIクライアント
 discord.js           Discord Webhookクライアント
 config.example.json  設定ファイルの例
+endpoints/           追加のExpressルート置き場
+middleware/          ミドルウェア置き場
 uploads/             LINEから取得した画像・動画の保存先
 ```
 
@@ -81,6 +92,13 @@ https://example.com/webhook
 ```
 
 このアプリをサブパス配下で公開している場合は、環境に合わせてWebhook URLを設定してください。
+
+## 運用前チェック
+
+- LINEグループの参加者に、投稿がDiscordへ転送されることを伝える。
+- `publicBaseUrl`から`/uploads/...`の画像・動画へアクセスできることを確認する。
+- Discord Webhook URLやLINEトークンをGitHubへ載せない。
+- テスト用グループでテキスト、画像、動画を1回ずつ送って確認する。
 
 ## 画像・動画の公開URL
 
