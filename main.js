@@ -25,7 +25,9 @@ app.use(bodyParser.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const endpointsPath = path.join(__dirname, "endpoints");
-fs.readdirSync(endpointsPath).forEach(function(file) {
+fs.readdirSync(endpointsPath).filter(function(file) {
+    return path.extname(file) === ".js";
+}).forEach(function(file) {
     const route = require(path.join(endpointsPath, file));
     app.use("/", route);
 });
