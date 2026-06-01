@@ -1,0 +1,9 @@
+{
+    "token": "OTtG26xXeHb+mzhPrdPONqj8W4K8QtzojFQw7sOkNYpW0rJtqKqoQV1yM3CbdMEpt0RzHcgrIVaodBt+xnSX2anYUxtn+qzBDtgrvNagd1Z+8Dtsq+ap9RudpXagTX4fwn0r05mqLERKvMOtHx3RSAdB04t89/1O/w1cDnyilFU=",
+    "environment": "development",
+    "basepath": "",
+    "publicBaseUrl": "https://qwertqwert.f5.si/transfer",
+    "discordWebhookUrl": "https://discord.com/api/webhooks/1510825036808847531/_JNYfA1dC1AC5Iqxc_po7uN3Pvs51-P221aFONFThverOPw3JxXrFDJQcOOkAd3G0bkn",
+    "version": "Develop Server",
+    "port": 4000
+}
