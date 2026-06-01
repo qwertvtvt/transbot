@@ -1,6 +1,6 @@
 # transbot
 
-LINEのメッセージをDiscordチャンネルへ転送する、身内向けのBotです。
+LINEのメッセージをDiscordチャンネルへ転送するBotです。
 
 クラスLINEなど、普段見に行くのが面倒なLINEグループの連絡を、Discord Webhook経由で指定チャンネルへ流すために作っています。
 
