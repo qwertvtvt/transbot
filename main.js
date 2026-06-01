@@ -15,6 +15,7 @@ const discord = new DiscordWebhook(discordWebhookUrl);
 const DocumentRoot = `${__dirname}/www`;
 const PORT = config.port;
 const Version = config.version;
+const authorId = config.authorId;
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -63,7 +64,7 @@ app.post("/webhook", async function (req, res) {
 
             content = `${publicBaseUrl}/uploads/${filename}`;
         }
-        
+
         await discord.send({
             username: name,
             avatarUrl: icon,
@@ -74,5 +75,5 @@ app.post("/webhook", async function (req, res) {
 
 http.listen(PORT, function() {
     console.log(`${Version} started on *:${PORT}`);
-    client.sendPush(`Admin: ${Version} started on *:${PORT}`, "U7edec6c11714713b648728869091df7f");
+    client.sendPush(`Admin: ${Version} started on *:${PORT}`, authorId);
 });
