@@ -13,6 +13,8 @@ const LineClient = require("./line");
 const DiscordWebhook = require("./discord");
 const client = new LineClient(token);
 const discord = new DiscordWebhook(discordWebhookUrl);
+const knex = require("./knex");
+const cron = require("node-cron");
 
 const DocumentRoot = `${__dirname}/www`;
 const PORT = process.env.PORT || config.port;
@@ -60,11 +62,20 @@ app.post("/webhook", async function (req, res) {
             content = event.message.text;
         }
         if(event.message.type == "image" || event.message.type == "video") {
+            const uploaded_at = Date.now();
             const data = await client.getMessageContent(event.message.id);
             const ext = event.message.type === "image" ? "jpg" : "mp4";
             const filename = `${event.message.id}.${ext}`;
             const filepath = path.join(__dirname, "uploads", filename);
             fs.writeFileSync(filepath, data);
+
+            await knex("files").insert({
+                filename,
+                uploaded_at
+            }).then(function() {
+            }).catch(function(error) {
+                console.log("DB保存でエラー:", error);
+            });
 
             content = `${publicBaseUrl}/uploads/${filename}`;
         }
@@ -74,6 +85,25 @@ app.post("/webhook", async function (req, res) {
             avatarUrl: icon,
             content
         });
+    }
+});
+
+cron.schedule("0 0 0 * * *", async function() {
+    try {
+        await knex.transaction(async function(trx) {
+            const now = Date.now();
+            const filesData = await trx("files").select("filename")
+                                .where("uploaded_at", "<=", now - 30 * 24 * 60 * 60 * 1000);
+            for(const file of filesData) {
+                const filepath = path.join(__dirname, "uploads", file.filename);
+                if(fs.existsSync(filepath)) fs.unlinkSync(filepath);
+                await trx("files")
+                    .where("filename", file.filename)
+                    .del();
+            }
+        });
+    } catch (error) {
+        console.log("定期削除トランザクション失敗:", error);
     }
 });
 
