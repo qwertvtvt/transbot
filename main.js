@@ -6,16 +6,18 @@ const http = require("http").Server(app);
 const bodyParser = require("body-parser");
 const cors = require('cors');
 const config = require("./config.json");
-const { token, discordWebhookUrl, publicBaseUrl } = config;
+const token = process.env.LINE_CHANNEL_ACCESS_TOKEN || config.token;
+const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL || config.discordWebhookUrl;
+const publicBaseUrl = process.env.PUBLIC_BASE_URL || config.publicBaseUrl;
 const LineClient = require("./line");
 const DiscordWebhook = require("./discord");
 const client = new LineClient(token);
 const discord = new DiscordWebhook(discordWebhookUrl);
 
 const DocumentRoot = `${__dirname}/www`;
-const PORT = config.port;
+const PORT = process.env.PORT || config.port;
 const Version = config.version;
-const authorId = config.authorId;
+const authorId = process.env.LINE_ADMIN_USER_ID || config.authorId;
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -75,5 +77,7 @@ app.post("/webhook", async function (req, res) {
 
 http.listen(PORT, function() {
     console.log(`${Version} started on *:${PORT}`);
-    client.sendPush(`Admin: ${Version} started on *:${PORT}`, authorId);
+    if(authorId) {
+        client.sendPush(`Admin: ${Version} started on *:${PORT}`, authorId);
+    }
 });
